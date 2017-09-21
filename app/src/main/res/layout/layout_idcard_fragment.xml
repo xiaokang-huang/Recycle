@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/swipe"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="128px"
+        android:gravity="center_horizontal"
+        android:drawableTop="@drawable/card"
+        android:drawablePadding="16px"
+        android:text="@string/idcard_swipe"
+        android:textSize="64px"
+        />
+</LinearLayout>

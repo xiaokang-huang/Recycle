@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="title">病死畜禽回收系统</string>
+
+    <string name="launch_setting">设 置</string>
+    <string name="launch_start">开 始</string>
+
+    <string name="idcard_swipe">请刷卡</string>
+
+    <string name="idfail_msg">卡无效\n请在 %1$d 秒后重刷</string>
+
+    <string name="user_info_cardnum">卡号</string>
+    <string name="user_info_name">姓名</string>
+    <string name="user_info_usertype">类型</string>
+    <string name="user_info_userinfo">用户信息</string>
+    <string name="user_info_registerdate">注册日期</string>
+    <string name="user_info">卡号: %1$s\n卡类型: %2$s\n用户名: %3$s\n用户信息:%4$s</string>
+    <string name="user_type_invalid">无效用户</string>
+    <string name="user_type_collector">收集员</string>
+    <string name="user_type_registedfarmer">注册农户</string>
+    <string name="user_type_individualfarmer">未注册农户</string>
+
+    <string name="anim_sel_pig">猪</string>
+    <string name="anim_sel_chicken">鸡</string>
+    <string name="anim_sel_duck">鸭</string>
+    <string name="anim_sel_other">其它</string>
+
+    <string name="wait_user_store_info">请将畜禽放在输送带上然后点击屏幕中按钮开始存放</string>
+
+    <string name="wait_sys_store_info">存储中，请稍后 ...</string>
+
+    <string name="exit_setting"> 退 出 </string>
+    <string name="save_setting"> 保 存 </string>
+    <string name="system_setting"> 系统设置 </string>
+    <string name="station_setting"> 站点设定 </string>
+    <string name="export_data"> 导出数据 </string>
+    <string name="edit_station_id">输入回收站ID</string>
+    <string name="edit_station_name">输入回收站名字</string>
+    <string name="toast_save_ok">设置保存成功</string>
+
+</resources>

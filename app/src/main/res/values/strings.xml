@@ -1,0 +1,44 @@
+<resources>
+    <string name="plc_ip">192.168.2.1</string>
+
+    <string name="app_name">RecycleSystem</string>
+
+    <string name="title">Recycle System</string>
+
+    <string name="launch_setting">Setting</string>
+    <string name="launch_start">Enter</string>
+
+    <string name="idcard_swipe">Please Swipe Card</string>
+
+    <string name="idfail_msg">Invalid Card\nPlease retry after %1$d seconds</string>
+
+    <string name="user_info_cardnum">CardNum</string>
+    <string name="user_info_name">Name</string>
+    <string name="user_info_usertype">UserType</string>
+    <string name="user_info_userinfo">UserInfo</string>
+    <string name="user_info_registerdate">RegisterDate</string>
+    <string name="user_info">CardNum: %1$s\nUserType: %2$s\nUserName:%3$sUserInfo:%4$s</string>
+    <string name="user_type_invalid">Invalid User</string>
+    <string name="user_type_collector">Collector</string>
+    <string name="user_type_registedfarmer">Registed Farmer</string>
+    <string name="user_type_individualfarmer">Individual Farmer</string>
+
+    <string name="anim_sel_pig">Pig</string>
+    <string name="anim_sel_chicken">Chicken</string>
+    <string name="anim_sel_duck">Duck</string>
+    <string name="anim_sel_other">Other</string>
+
+    <string name="wait_user_store_info">Please put animal\nonto the conveyer belt\nand click Start button</string>
+
+    <string name="wait_sys_store_info">System storing, Please wait ...</string>
+
+    <string name="exit_setting"> Exit </string>
+    <string name="save_setting"> Save </string>
+    <string name="system_setting"> System Setting </string>
+    <string name="station_setting"> Station Setting </string>
+    <string name="export_data"> Export Data </string>
+    <string name="edit_station_id">Enter Station Id</string>
+    <string name="edit_station_name">Enter Station Name</string>
+    <string name="toast_save_ok">Setting Saved</string>
+
+</resources>

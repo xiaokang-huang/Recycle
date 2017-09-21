@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="launch_timeout_second">60</integer>
+    <integer name="idfail_timeout_second">3</integer>
+    <integer name="userinfo_timeout_second">60</integer>
+    <integer name="animalsel_timeout_second">60</integer>
+    <integer name="waituserstore_timeout_second">300</integer>
+    <integer name="taskinfo_timeout_second">60</integer>
+    <integer name="userprint_timeout_second">60</integer>
+</resources>
