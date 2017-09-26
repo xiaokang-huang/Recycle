@@ -110,7 +110,7 @@ public class TaskInfoFragment extends FragmentBase implements View.OnClickListen
         }
         TaskData.AnimalInfo animal = TaskData.getInstance().getAnimalInfo();
         if (animal.isValid()) {
-            mUserInfo.setText(String.format("重量:%f千克\n长度:%f米",
+            mUserInfo.setText(String.format("重量:%f千克\n长度:%f米\n有无金属件：无",
                     animal.mWeightGRAM / 1000.0f, animal.mLengthMM / 1000.0f));
         }
     }

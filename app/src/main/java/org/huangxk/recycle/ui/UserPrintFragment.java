@@ -10,6 +10,7 @@ import android.widget.TextView;
 import org.huangxk.recycle.CountDown;
 import org.huangxk.recycle.PosWriter;
 import org.huangxk.recycle.R;
+import org.huangxk.recycle.Speeker;
 import org.huangxk.recycle.TaskData;
 import org.huangxk.recycle.statusMachine.statusBase;
 import org.huangxk.recycle.statusMachine.statusManager;
@@ -41,8 +42,10 @@ public class UserPrintFragment extends FragmentBase implements CountDown.CountLi
         checkUserUI();
         mTick.setText(String.format("%d", timeout));
         mCountDown = new CountDown(timeout, this);
+        Speeker.getInstance().startSpeak(Speeker.SOUND_PRINT, 10000);
         try {
-            PosWriter.getInstance().writeUser(getActivity(), TaskData.getInstance().getUserInfo());
+            //PosWriter.getInstance().writeUser(getActivity(), TaskData.getInstance().getUserInfo());
+            PosWriter.getInstance().writeTask(getActivity());
         } catch (Exception e) {
             e.printStackTrace();
         }

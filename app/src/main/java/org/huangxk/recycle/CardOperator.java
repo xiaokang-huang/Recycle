@@ -91,6 +91,13 @@ public class CardOperator {
 
     private boolean readMifareClassic(Tag tag) {
         MifareClassic mifare = MifareClassic.get(tag);
+        /*
+        if (true) {
+            writeUser(mifare, null);
+            return false;
+        }
+        */
+
         try {
             return readUser(mifare, TaskData.getInstance().getUserInfo());
         } catch (IOException e) {
@@ -111,25 +118,29 @@ public class CardOperator {
     }
 
     public boolean writeUser(MifareClassic mifare, TaskData.UserInfo user) {
-        byte[][] write_data = {
-                MAGIC_DATA,
-                new byte[] {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15},
-                new byte[] {0x0, 0x0, 0x10, 0x2}, // 0 farmer
-                "张三".getBytes(),
-                "2017-07-24".getBytes(),
-                "其它信息".getBytes(),
-        };
-
         try {
+            mifare.connect();
+            byte[][] write_data = {
+                    MAGIC_DATA,
+                    new byte[] {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15},
+                    new byte[] {0x0, 0x0, 0x10, 0x1}, // 0 farmer
+                    "李四".getBytes(),
+                    "2017-07-24".getBytes(),
+                    "其它信息".getBytes(),
+            };
+
             writeSector(mifare, write_data[0], write_data[1], write_data[2], 1);
             writeSector(mifare, write_data[3], write_data[4], write_data[5], 2);
             writeSector(mifare, null, null, null, 0);
+
+            mifare.close();
         } catch (IOException e) {
             e.printStackTrace();
             return false;
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        Log.d(LOG_TAG, "read card ok");
         return true;
     }
 

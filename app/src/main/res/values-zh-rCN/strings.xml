@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="title">病死畜禽回收系统</string>
+    <string name="title">病死畜禽智能化冷藏收集体系</string>
 
     <string name="launch_setting">设 置</string>
     <string name="launch_start">开 始</string>
 
     <string name="idcard_swipe">请刷卡</string>
+    <string name="store_time">存储时间: %1$d小时</string>
 
     <string name="idfail_msg">卡无效\n请在 %1$d 秒后重刷</string>
 
@@ -20,10 +21,13 @@
     <string name="user_type_registedfarmer">注册农户</string>
     <string name="user_type_individualfarmer">未注册农户</string>
 
+    <string name="anim_type">畜禽种类</string>
     <string name="anim_sel_pig">猪</string>
     <string name="anim_sel_chicken">鸡</string>
     <string name="anim_sel_duck">鸭</string>
     <string name="anim_sel_other">其它</string>
+    <string name="anim_length">长度(米)</string>
+    <string name="anim_weight">重量(千克)</string>
 
     <string name="wait_user_store_info">请将畜禽放在输送带上然后点击屏幕中按钮开始存放</string>
 

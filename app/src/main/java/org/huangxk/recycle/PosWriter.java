@@ -13,7 +13,7 @@ import java.util.Locale;
 
 public class PosWriter {
     private static final String LOG_TAG = "PosWriter";
-    private static final String PORT = "/dev/ttyS1";
+    private static final String PORT = "/dev/ttyUSB0";
     private static final int BAUD = 9600;
 
     private static final Charset CHARSET = Charset.forName("GB18030");
@@ -36,6 +36,28 @@ public class PosWriter {
         writeChinese(userInfo.mRegisterDate);
         writeChinese(context.getResources().getString(R.string.user_info_userinfo));
         writeChinese(userInfo.mInfo);
+    }
+
+    public void writeAnimal(Context context, TaskData.AnimalInfo animalInfo) throws Exception {
+        Log.d(LOG_TAG, "write animal");
+        writeChinese(context.getResources().getString(R.string.anim_type));
+        writeChinese(getAnimalType(context, animalInfo));
+        writeChinese(context.getResources().getString(R.string.anim_length));
+        writeChinese(String.format("%5.2f", animalInfo.mLengthMM / 1000));
+        writeChinese(context.getResources().getString(R.string.anim_weight));
+        writeChinese(String.format("%5.2f", animalInfo.mWeightGRAM / 1000));
+    }
+
+    public void writeTask(Context context) throws Exception {
+        TaskData.UserInfo userInfo = TaskData.getInstance().getUserInfo();
+        TaskData.AnimalInfo animalInfo = TaskData.getInstance().getAnimalInfo();
+        writeChinese("------------------");
+        writeUser(context, userInfo);
+        if (!userInfo.isCollector() && animalInfo != null && animalInfo.isValid()) {
+            writeChinese("------------------");
+            writeAnimal(context, animalInfo);
+        }
+        for (int i = 0; i < 5; ++i) writeLine("");
     }
 
     public void testWrite() {
@@ -96,5 +118,16 @@ public class PosWriter {
             sb.append(String.format("0x%x ", data[offset + i]));
         }
         return sb.toString();
+    }
+
+    private String getAnimalType(Context context, TaskData.AnimalInfo info) {
+        if (info.mAnimalType == TaskData.ANIMALINFO_TYPE_PIG) {
+            return context.getResources().getString(R.string.anim_sel_pig);
+        } else if  (info.mAnimalType == TaskData.ANIMALINFO_TYPE_CHICKEN) {
+            return context.getResources().getString(R.string.anim_sel_chicken);
+        } else if  (info.mAnimalType == TaskData.ANIMALINFO_TYPE_DUCK) {
+            return context.getResources().getString(R.string.anim_sel_duck);
+        }
+        return context.getResources().getString(R.string.anim_sel_other);
     }
 }

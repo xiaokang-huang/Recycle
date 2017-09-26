@@ -12,6 +12,7 @@ import android.view.View;
 
 import org.huangxk.recycle.CardOperator;
 import org.huangxk.recycle.DataBase;
+import org.huangxk.recycle.PosWriter;
 import org.huangxk.recycle.R;
 import org.huangxk.recycle.plc.Connection;
 import org.huangxk.recycle.plc.testPLC;
@@ -70,9 +71,11 @@ public class MainActivity extends Activity implements statusManager.onStatusChan
     protected void onNewIntent(Intent intent) {
         Log.d(LOG_TAG, "onNewIntent " + intent.getAction());
 
-        statusBase currStatus = statusManager.getInstance().getCurrentStatus();
-        if (currStatus.needNfc()) {
-            currStatus.getFragment().handleNewIntent(intent);
+        if (!intent.getAction().equals(Intent.ACTION_MAIN)) {
+            statusBase currStatus = statusManager.getInstance().getCurrentStatus();
+            if (currStatus.needNfc()) {
+                currStatus.getFragment().handleNewIntent(intent);
+            }
         }
 
         super.onNewIntent(intent);

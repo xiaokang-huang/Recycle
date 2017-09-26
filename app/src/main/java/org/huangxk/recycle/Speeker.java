@@ -1,6 +1,7 @@
 package org.huangxk.recycle;
 
 import android.content.Context;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -12,7 +13,9 @@ import com.iflytek.cloud.SpeechSynthesizer;
 import com.iflytek.cloud.SpeechUtility;
 import com.iflytek.cloud.SynthesizerListener;
 
-public class Speeker implements InitListener, SynthesizerListener {
+import java.io.IOException;
+
+public class Speeker implements InitListener, SynthesizerListener, MediaPlayer.OnCompletionListener {
     public static final String SOUND_IDCARD = "请在刷卡区域刷卡";
     public static final String SOUND_IDFAIL = "身份验证失败，请重新刷卡";
     public static final String SOUND_USERINFO = "请点击右下角箭头继续操作";
@@ -20,12 +23,15 @@ public class Speeker implements InitListener, SynthesizerListener {
     public static final String SOUND_WAITUSER = "请将畜禽放在输送带上，然后点击屏幕中按钮开始存放";
     public static final String SOUND_WAITSYS = "存储中，请稍后";
     public static final String SOUND_TASKINFO = "请确认屏幕上信息";
+    public static final String SOUND_PRINT = "本次存储结束";
 
     private static final String APPID = "59ba2f8b";
     private static final int MSG_WHAT_START = 143;
     private SpeechSynthesizer mTts;
     private String mData;
     private int mDelayMs = 1000;
+
+    private MediaPlayer mPlayer = new MediaPlayer();
 
     private void setParam(){
         mTts.setParameter(SpeechConstant.PARAMS, null);
@@ -48,6 +54,31 @@ public class Speeker implements InitListener, SynthesizerListener {
     public void startSpeak(String data, int delayMs) {
         mData = data;
         mDelayMs = delayMs;
+
+        String nativeFile = null;
+        if (data.equals(SOUND_IDCARD)) {
+            nativeFile = "/sdcard/1.m4a";
+        } else if (data.equals(SOUND_USERINFO)) {
+            nativeFile = "/sdcard/2.m4a";
+        } else if (data.equals(SOUND_PRINT)) {
+            nativeFile = "/sdcard/3.m4a";
+        }
+        if (nativeFile != null) {
+            if (mPlayer.isPlaying()) {
+                mPlayer.stop();
+            }
+            try {
+                mPlayer.reset();
+                mPlayer.setDataSource(nativeFile);
+                mPlayer.setOnCompletionListener(this);
+                mPlayer.prepare();
+                mPlayer.start();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return;
+        }
+
         if (mTts.isSpeaking()) {
             stopSpeak();
         }
@@ -55,6 +86,9 @@ public class Speeker implements InitListener, SynthesizerListener {
     }
 
     public void stopSpeak() {
+        if (mPlayer.isPlaying()) {
+            mPlayer.stop();
+        }
         mTts.stopSpeaking();
     }
 
@@ -115,4 +149,9 @@ public class Speeker implements InitListener, SynthesizerListener {
             super.handleMessage(msg);
         }
     };
+
+    @Override
+    public void onCompletion(MediaPlayer mediaPlayer) {
+        mHandler.sendEmptyMessageDelayed(MSG_WHAT_START, mDelayMs);
+    }
 }

@@ -124,6 +124,8 @@ public class WaitUserStoreFragment extends FragmentBase implements CountDown.Cou
 
         mCameraManager = (CameraManager) getActivity().getSystemService(Context.CAMERA_SERVICE);
         try {
+            String[] list = mCameraManager.getCameraIdList();
+            if (list.length == 0)   return;
             mCameraID = (mCameraManager.getCameraIdList())[0];
             // set surface rotation
             Matrix matrix = new Matrix();

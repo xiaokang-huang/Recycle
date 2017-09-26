@@ -7,4 +7,6 @@
     <integer name="waituserstore_timeout_second">300</integer>
     <integer name="taskinfo_timeout_second">60</integer>
     <integer name="userprint_timeout_second">60</integer>
+
+    <integer name="check_network_gap">10000</integer>
 </resources>

@@ -11,9 +11,11 @@ public class DataBase extends SQLiteOpenHelper {
     private static final String DB_NAME = "recycle_db";
     private static final int DB_VERSION = 1;
     private static final String KEY_PREFERENCE = "recycle_setting";
+    private static final String KEY_FIRST_STORE_TIME = "key_first_store_time";
 
     public static final String KEY_STATIONID = "station_id";
     public static final int INVALID_STATIONID = -1;
+    public static final long INVALID_STORE_TIME = -1;
 
     private static final String COL_TIMESTAMP = "create_time";
     private static final String COL_USERID = "user_id";
@@ -31,7 +33,7 @@ public class DataBase extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        sqLiteDatabase.execSQL(CREATE_TABLE_V1_0);
+        sqLiteDatabase.execSQL(CREATE_STORE_TABLE_V1_0);
     }
 
     @Override
@@ -45,9 +47,25 @@ public class DataBase extends SQLiteOpenHelper {
         editor.commit();
     }
 
+    public int getStationId() {
+        SharedPreferences sp = sContext.getSharedPreferences(KEY_PREFERENCE, Context.MODE_PRIVATE);
+        return sp.getInt(KEY_STATIONID, INVALID_STATIONID);
+    }
+
+    public long getFirstStoreTime() {
+        SharedPreferences sp = sContext.getSharedPreferences(KEY_PREFERENCE, Context.MODE_PRIVATE);
+        return sp.getLong(KEY_FIRST_STORE_TIME, INVALID_STORE_TIME);
+    }
+
+    private void setFirstStoreTime(long value) {
+        SharedPreferences.Editor editor = sContext.getSharedPreferences(KEY_PREFERENCE, Context.MODE_PRIVATE).edit();
+        editor.putLong(KEY_FIRST_STORE_TIME, value);
+        editor.commit();
+    }
+
     public boolean saveStoreTask() {
         TaskData task = TaskData.getInstance();
-        if (task.getUserInfo() == null || task.getAnimalInfo() == null) return false;
+        if (!task.getUserInfo().isValid() || !task.getAnimalInfo().isValid()) return false;
         SQLiteDatabase db = getWritableDatabase();
         String sql = String.format("INSERT INTO taskStore (%s, %s, %s, %s, %s, %s, %s) VALUES(?,?,?,?,?,?,?)",
                 COL_USERID, COL_USERTYPE, COL_USERNAME, COL_ANIMALTYPE, COL_ANIMALLENGTH, COL_ANIMALWEIGHT, COL_ANIMALSNAPSHOT);
@@ -60,12 +78,26 @@ public class DataBase extends SQLiteOpenHelper {
                 task.getAnimalInfo().mWeightGRAM,
                 task.getAnimalInfo().jpegPicToByte()
         });
+
+        if (getFirstStoreTime() == INVALID_STORE_TIME) {
+            setFirstStoreTime(System.currentTimeMillis());
+        }
         return true;
     }
 
-    public int getStationId() {
-        SharedPreferences sp = sContext.getSharedPreferences(KEY_PREFERENCE, Context.MODE_PRIVATE);
-        return sp.getInt(KEY_STATIONID, -1);
+    public boolean saveCollectTask() {
+        TaskData task = TaskData.getInstance();
+        if (!task.getUserInfo().isValid())  return false;
+        SQLiteDatabase db = getWritableDatabase();
+        String sql = String.format("INSERT INTO taskStore (%s, %s, %s) VALUES(?,?,?)",
+                COL_USERID, COL_USERTYPE, COL_USERNAME);
+        db.execSQL(sql, new Object[] {
+                task.getUserInfo().mCardNum,
+                task.getUserInfo().mUserType,
+                task.getUserInfo().mUserName,
+        });
+        setFirstStoreTime(INVALID_STORE_TIME);
+        return true;
     }
 
     public int countData(int flag) {    //0:all 1:transfered 2:untransfered
@@ -80,16 +112,16 @@ public class DataBase extends SQLiteOpenHelper {
         return cursor.getInt(0);
     }
 
-    private static final String CREATE_TABLE_V1_0 =
+    private static final String CREATE_STORE_TABLE_V1_0 =
         "CREATE TABLE taskStore (\n" +
             COL_TIMESTAMP + " TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n" +
             COL_USERID + " CHAR(128) NOT NULL,\n" +
             COL_USERTYPE + " SMALLINT NOT NULL,\n" +
             COL_USERNAME + " CHAR(32) NOT NULL,\n" +
-            COL_ANIMALTYPE + " SMALLINT NOT NULL,\n" +
-            COL_ANIMALLENGTH + " INT NOT NULL,\n" +
-            COL_ANIMALWEIGHT + " INT NOT NULL,\n" +
-            COL_ANIMALSNAPSHOT + " BLOB NOT NULL,\n" +
+            COL_ANIMALTYPE + " SMALLINT DEFAULT NULL,\n" +
+            COL_ANIMALLENGTH + " INT DEFAULT NULL,\n" +
+            COL_ANIMALWEIGHT + " INT DEFAULT NULL,\n" +
+            COL_ANIMALSNAPSHOT + " BLOB DEFAULT NULL,\n" +
             COL_TRANSFERED + " SMALLINT DEFAULT 0\n" +
         ");";
 
@@ -104,4 +136,6 @@ public class DataBase extends SQLiteOpenHelper {
     public static DataBase getInstance() {
         return sInstance;
     }
+
+
 }

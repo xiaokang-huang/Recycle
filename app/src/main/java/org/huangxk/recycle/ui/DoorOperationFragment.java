@@ -4,26 +4,37 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.huangxk.recycle.DataBase;
 import org.huangxk.recycle.R;
 import org.huangxk.recycle.plc.Connection;
 import org.huangxk.recycle.statusMachine.statusBase;
 import org.huangxk.recycle.statusMachine.statusManager;
 
 public class DoorOperationFragment extends FragmentBase implements View.OnClickListener {
+    private static final String LOG_TAG = "DoorOperationFragment";
     private TextView mLevel1;
     private TextView mLevel2;
     private TextView mLevel3;
     private TextView mShutDoor;
+
+    private ImageView mDebugImg;
+    private TextView mDebugText;
+    private boolean mShowDebug;
+    private boolean mConnected = false;
+
     private static final int MSG_START_OPEN = 1234;
     private static final int MSG_START_LV1 = 1235;
     private static final int MSG_START_LV2 = 1236;
     private static final int MSG_START_LV3 = 1237;
     private static final int MSG_START_CLOSE = 1238;
+    private static final int MSG_UPDATE_DEBUG = 1345;
 
     private MyHandler mHandler;
 
@@ -43,6 +54,13 @@ public class DoorOperationFragment extends FragmentBase implements View.OnClickL
         mLevel2.setOnClickListener(this);
         mLevel3.setOnClickListener(this);
         mShutDoor.setOnClickListener(this);
+
+        mDebugImg = (ImageView) view.findViewById(R.id.debugImg);
+        mDebugText = (TextView) view.findViewById(R.id.debugText);
+
+        mShowDebug = false;
+        mDebugText.setVisibility(View.INVISIBLE);
+        mDebugImg.setOnClickListener(this);
 
         return view;
     }
@@ -68,6 +86,16 @@ public class DoorOperationFragment extends FragmentBase implements View.OnClickL
             mHandler.sendEmptyMessage(MSG_START_LV3);
         } else if (id == R.id.shutdoor) {
             mHandler.sendEmptyMessage(MSG_START_CLOSE);
+        } else if (id == R.id.debugImg) {
+            if (mShowDebug) {
+                mShowDebug = false;
+                mDebugText.setVisibility(View.INVISIBLE);
+                mHandler.removeMessages(MSG_UPDATE_DEBUG);
+            } else {
+                mShowDebug = true;
+                mDebugText.setVisibility(View.VISIBLE);
+                mHandler.sendEmptyMessageDelayed(MSG_UPDATE_DEBUG, 500);
+            }
         }
     }
 
@@ -78,15 +106,18 @@ public class DoorOperationFragment extends FragmentBase implements View.OnClickL
         mShutDoor.setEnabled(true);
     }
 
-    private static class MyHandler extends Handler {
+    private class MyHandler extends Handler {
         public MyHandler(Looper looper) {
             super(looper);
         }
 
         @Override
         public void handleMessage(Message msg) {
-            if (msg.what == MSG_START_OPEN && Connection.getInstance().connect("192.168.2.1") == true) {
-                Connection.getInstance().doOperation(Connection.OP_BACKDOOR_OPEN, null);
+            if (msg.what == MSG_START_OPEN) {
+                DoorOperationFragment.this.mConnected = Connection.getInstance().connect("192.168.2.1");
+                if (DoorOperationFragment.this.mConnected) {
+                    Connection.getInstance().doOperation(Connection.OP_BACKDOOR_OPEN, null);
+                }
             } else if (msg.what == MSG_START_LV1) {
                 Connection.getInstance().doOperation(Connection.OP_LEVEL1, null);
             } else if (msg.what == MSG_START_LV2) {
@@ -97,10 +128,13 @@ public class DoorOperationFragment extends FragmentBase implements View.OnClickL
                 Connection.getInstance().doOperation(Connection.OP_BACKDOOR_CLOSE, null);
                 Connection.getInstance().doOperation(Connection.OP_BACKDOOR_CLEAR, null);
                 Connection.getInstance().close();
+                DoorOperationFragment.this.mConnected = false;
+                Log.d(LOG_TAG, "save current task " + DataBase.getInstance().saveCollectTask());
                 statusManager.getInstance().getCurrentStatus().updateStatus(statusBase.EVENT_NEXT1);
-            } else if (msg.what == Connection.MSG_OPERATION_FINISHED) {
-                int opcode = msg.arg1;
-                if (opcode == Connection.OP_BACKDOOR_CLOSE) {
+            } else if (msg.what == MSG_UPDATE_DEBUG) {
+                if (DoorOperationFragment.this.mConnected) {
+                    DoorOperationFragment.this.mDebugText.setText(Connection.getInstance().getInput());
+                    mHandler.sendEmptyMessageDelayed(MSG_UPDATE_DEBUG, 500);
                 }
             }
             super.handleMessage(msg);

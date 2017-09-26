@@ -9,6 +9,7 @@
     <string name="launch_start">Enter</string>
 
     <string name="idcard_swipe">Please Swipe Card</string>
+    <string name="store_time">StoreTime: %1$d(H)</string>
 
     <string name="idfail_msg">Invalid Card\nPlease retry after %1$d seconds</string>
 
@@ -23,10 +24,13 @@
     <string name="user_type_registedfarmer">Registed Farmer</string>
     <string name="user_type_individualfarmer">Individual Farmer</string>
 
+    <string name="anim_type">AnimalType</string>
     <string name="anim_sel_pig">Pig</string>
     <string name="anim_sel_chicken">Chicken</string>
     <string name="anim_sel_duck">Duck</string>
     <string name="anim_sel_other">Other</string>
+    <string name="anim_length">Length(m)</string>
+    <string name="anim_weight">Weight(kg)</string>
 
     <string name="wait_user_store_info">Please put animal\nonto the conveyer belt\nand click Start button</string>
 

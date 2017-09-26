@@ -4,13 +4,19 @@ import android.content.Intent;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.jiagu.utils.netUtil;
+
 import org.huangxk.recycle.CardOperator;
+import org.huangxk.recycle.DataBase;
 import org.huangxk.recycle.R;
 import org.huangxk.recycle.Speeker;
 import org.huangxk.recycle.TaskData;
@@ -18,7 +24,11 @@ import org.huangxk.recycle.statusMachine.statusBase;
 import org.huangxk.recycle.statusMachine.statusManager;
 
 public class IdCardFragment extends FragmentBase implements View.OnClickListener, View.OnLongClickListener {
-    TextView mSwipe;
+    private static final int MSG_CHECK_NETWORK = 0x100;
+    private static final int MSG_CHECK_STORETIME = 0x101;
+    private TextView mSwipe;
+    private ImageView mNetStatus;
+    private TextView mStoreTime;
 
     public IdCardFragment() {
         mCanReadNfc = true;
@@ -32,6 +42,9 @@ public class IdCardFragment extends FragmentBase implements View.OnClickListener
         mSwipe.setOnClickListener(this);
         mSwipe.setOnLongClickListener(this);
 
+        mNetStatus = (ImageView) view.findViewById(R.id.networkstate);
+        mStoreTime = (TextView) view.findViewById(R.id.storetime);
+
         return view;
         //return super.onCreateView(inflater, container, savedInstanceState);
     }
@@ -39,12 +52,16 @@ public class IdCardFragment extends FragmentBase implements View.OnClickListener
     @Override
     public void onResume() {
         TaskData.getInstance().clearAll();
-        Speeker.getInstance().startSpeak(Speeker.SOUND_IDCARD, 1000);
+        Speeker.getInstance().startSpeak(Speeker.SOUND_IDCARD, 10000);
+        updateNetwork();
+        checkStoreTime();
         super.onResume();
     }
 
     @Override
     public void onPause() {
+        mHandler.removeMessages(MSG_CHECK_NETWORK);
+        mHandler.removeMessages(MSG_CHECK_STORETIME);
         Speeker.getInstance().stopSpeak();
         super.onPause();
     }
@@ -75,9 +92,39 @@ public class IdCardFragment extends FragmentBase implements View.OnClickListener
         if (CardOperator.getInstance().readCardData(intent) == true) {
             statusManager.getInstance().getCurrentStatus().updateStatus(statusBase.EVENT_NEXT1);
         } else {
-            statusManager.getInstance().getCurrentStatus().updateStatus(statusBase.EVENT_NEXT2);
+            statusManager.getInstance().getCurrentStatus().updateStatus(statusBase.EVENT_FAILED);
         }
     }
 
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            if (msg.what == MSG_CHECK_NETWORK) {
+                updateNetwork();
+            } else if (msg.what == MSG_CHECK_STORETIME) {
+                checkStoreTime();
+            }
+            super.handleMessage(msg);
+        }
+    };
 
+    private void updateNetwork() {
+        boolean connect = netUtil.isNetworkConnected(getActivity());
+        int icon = (connect)? R.drawable.network : R.drawable.network_disconnect;
+        mNetStatus.setImageResource(icon);
+        mHandler.sendEmptyMessageDelayed(MSG_CHECK_NETWORK, getResources().getInteger(R.integer.check_network_gap));
+    }
+
+    private void checkStoreTime() {
+        long firstStoreTime = DataBase.getInstance().getFirstStoreTime();
+        if (firstStoreTime == DataBase.INVALID_STORE_TIME) {
+            mStoreTime.setText(String.format(getResources().getString(R.string.store_time), 0));
+        } else {
+            long currentTime = System.currentTimeMillis();
+            long diff = (currentTime - firstStoreTime) / 1000 / 3600;
+            if (diff < 0) diff = 0;
+            mStoreTime.setText(String.format(getResources().getString(R.string.store_time), diff));
+        }
+        mHandler.sendEmptyMessageDelayed(MSG_CHECK_STORETIME, 10000);
+    }
 }
