@@ -28,6 +28,7 @@ public class WaitSysStoreFragment extends FragmentBase implements View.OnClickLi
     private PLCHandler mHandler;
     private static final int MSG_START = 1395;
     private static final int MSG_UPDATE_DEBUG = 1396;
+    private static final int MSG_TIMEOUT = 1397;
 
     private ImageView mDebugImg;
     private TextView mDebugText;
@@ -54,11 +55,12 @@ public class WaitSysStoreFragment extends FragmentBase implements View.OnClickLi
         mHandler = new PLCHandler(getActivity().getMainLooper());
         if (mConnected == false) {
             showConnectionAlert();
-            statusManager.getInstance().getCurrentStatus().updateStatus(statusBase.EVENT_FAILED);
+            //statusManager.getInstance().getCurrentStatus().updateStatus(statusBase.EVENT_FAILED);
             //statusManager.getInstance().getCurrentStatus().updateStatus(statusBase.EVENT_NEXT1);
         } else {
             mHandler.sendEmptyMessage(MSG_START);
         }
+        mHandler.sendEmptyMessageDelayed(MSG_TIMEOUT, 1000 * 300);
         Speeker.getInstance().startSpeak(Speeker.SOUND_WAITSYS, 1000);
         super.onResume();
     }
@@ -69,6 +71,9 @@ public class WaitSysStoreFragment extends FragmentBase implements View.OnClickLi
             Connection.getInstance().close();
         }
         Speeker.getInstance().stopSpeak();
+
+        mHandler.removeMessages(MSG_TIMEOUT);
+        mHandler.removeMessages(MSG_UPDATE_DEBUG);
         super.onPause();
     }
 
@@ -124,6 +129,8 @@ public class WaitSysStoreFragment extends FragmentBase implements View.OnClickLi
                     WaitSysStoreFragment.this.mDebugText.setText(Connection.getInstance().getInput());
                     mHandler.sendEmptyMessageDelayed(MSG_UPDATE_DEBUG, 500);
                 }
+            } else if (msg.what == MSG_TIMEOUT) {
+                statusManager.getInstance().getCurrentStatus().updateStatus(statusBase.EVENT_NEXT1);
             }
             super.handleMessage(msg);
         }

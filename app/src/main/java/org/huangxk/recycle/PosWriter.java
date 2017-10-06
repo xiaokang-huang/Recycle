@@ -43,9 +43,9 @@ public class PosWriter {
         writeChinese(context.getResources().getString(R.string.anim_type));
         writeChinese(getAnimalType(context, animalInfo));
         writeChinese(context.getResources().getString(R.string.anim_length));
-        writeChinese(String.format("%5.2f", animalInfo.mLengthMM / 1000));
+        writeChinese(String.format("%5.2f", animalInfo.mLengthMM / 1000.0f));
         writeChinese(context.getResources().getString(R.string.anim_weight));
-        writeChinese(String.format("%5.2f", animalInfo.mWeightGRAM / 1000));
+        writeChinese(String.format("%5.2f", animalInfo.mWeightGRAM / 1000.0f));
     }
 
     public void writeTask(Context context) throws Exception {

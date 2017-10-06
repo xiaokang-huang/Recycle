@@ -1,6 +1,8 @@
 package org.huangxk.recycle.ui;
 
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.os.Bundle;
@@ -29,6 +31,7 @@ public class IdCardFragment extends FragmentBase implements View.OnClickListener
     private TextView mSwipe;
     private ImageView mNetStatus;
     private TextView mStoreTime;
+    private TextView mVersion;
 
     public IdCardFragment() {
         mCanReadNfc = true;
@@ -44,6 +47,9 @@ public class IdCardFragment extends FragmentBase implements View.OnClickListener
 
         mNetStatus = (ImageView) view.findViewById(R.id.networkstate);
         mStoreTime = (TextView) view.findViewById(R.id.storetime);
+        mVersion = (TextView) view.findViewById(R.id.version);
+
+
 
         return view;
         //return super.onCreateView(inflater, container, savedInstanceState);
@@ -55,6 +61,7 @@ public class IdCardFragment extends FragmentBase implements View.OnClickListener
         Speeker.getInstance().startSpeak(Speeker.SOUND_IDCARD, 10000);
         updateNetwork();
         checkStoreTime();
+        updateVersion();
         super.onResume();
     }
 
@@ -126,5 +133,17 @@ public class IdCardFragment extends FragmentBase implements View.OnClickListener
             mStoreTime.setText(String.format(getResources().getString(R.string.store_time), diff));
         }
         mHandler.sendEmptyMessageDelayed(MSG_CHECK_STORETIME, 10000);
+    }
+
+    private void updateVersion() {
+        PackageManager pm = getActivity().getPackageManager();//context为当前Activity上下文
+        PackageInfo pi = null;
+        try {
+            pi = pm.getPackageInfo(getActivity().getPackageName(), 0);
+            mVersion.setText(String.format("版本：V%s", pi.versionName));
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+
     }
 }

@@ -164,18 +164,33 @@ public class Connection {
                     mHandler.sendMessage(mHandler.obtainMessage(MSG_OPERATION_FINISHED, mOpCode, 0));
                     Log.d(LOG_TAG, String.format("\tfinished"));
                 }
+            } else if (mOpCode == OP_LEVEL1 || mOpCode == OP_LEVEL2 || mOpCode == OP_LEVEL3) {
+                if (!isLevelFinish()) {
+                    mHandler.postDelayed(this, CHECK_FINISH_DELAY);
+                    Log.d(LOG_TAG, String.format("\tnot finished"));
+                } else {
+                    finishOperation(mOpCode);
+                    mHandler.sendMessage(mHandler.obtainMessage(MSG_OPERATION_FINISHED, mOpCode, 0));
+                    Log.d(LOG_TAG, String.format("\tfinished"));
+                }
             }
         }
     }
 
     public boolean isFrontdoorOpenFinish() {
+        updateInputData();
         updateOutputData();
-        return checkBit(mOutputData[0], 0) == false;
+        boolean frontDoorOpenOK = checkBit(mInputData[3], 1);
+        boolean frontDoorStopOpen = !checkBit(mOutputData[0], 0);
+        return frontDoorOpenOK && frontDoorStopOpen;
     }
 
     public boolean isFrontdoorCloseFinish() {
+        updateInputData();
         updateOutputData();
-        return checkBit(mOutputData[0], 1) == false;
+        boolean frontDoorCloseOK = checkBit(mInputData[3], 2);
+        boolean frontDoorStopClose = !checkBit(mOutputData[0], 1);
+        return frontDoorCloseOK && frontDoorStopClose;
     }
 
     public boolean isTransFinish() {
@@ -185,12 +200,18 @@ public class Connection {
 
     public boolean isBackdoorOpenFinish() {
         updateInputData();
-        return checkBit(mInputData[3], 3);
+        updateOutputData();
+        boolean backDoorOpenOK = checkBit(mInputData[3], 3);
+        boolean backDoorStopOpen = !checkBit(mOutputData[0], 2);
+        return backDoorOpenOK && backDoorStopOpen;
     }
 
     public boolean isBackdoorCloseFinish() {
         updateInputData();
-        return checkBit(mInputData[3], 4);
+        updateOutputData();
+        boolean backDoorCloseOK = checkBit(mInputData[3], 4);
+        boolean backDoorStopClose = !checkBit(mOutputData[0], 3);
+        return backDoorCloseOK && backDoorStopClose;
     }
 
     public boolean isLevelFinish() {
