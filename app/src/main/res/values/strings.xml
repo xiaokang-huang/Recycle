@@ -32,6 +32,11 @@
     <string name="anim_length">Length(m)</string>
     <string name="anim_weight">Weight(kg)</string>
 
+    <string name="task_time">TaskTime</string>
+    <string name="task_type">TaskType</string>
+    <string name="task_type_store">Store</string>
+    <string name="task_type_take">Take</string>
+
     <string name="wait_user_store_info">Please put animal\nonto the conveyer belt\nand click Start button</string>
 
     <string name="wait_sys_store_info">System storing, Please wait ...</string>

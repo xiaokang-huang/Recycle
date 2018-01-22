@@ -29,6 +29,11 @@
     <string name="anim_length">长度(米)</string>
     <string name="anim_weight">重量(千克)</string>
 
+    <string name="task_time">任务时间</string>
+    <string name="task_type">任务类型</string>
+    <string name="task_type_store">存</string>
+    <string name="task_type_take">取</string>
+
     <string name="wait_user_store_info">请将畜禽放在输送带上然后点击屏幕中按钮开始存放</string>
 
     <string name="wait_sys_store_info">存储中，请稍后 ...</string>

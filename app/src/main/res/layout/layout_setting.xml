@@ -52,6 +52,15 @@
                 android:background="@drawable/round_corner_solid"
                 android:textSize="64px"
                 android:text="@string/system_setting"/>
+            <TextView
+                android:id="@+id/test_print"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32px"
+                android:gravity="center"
+                android:background="@drawable/round_corner_solid"
+                android:textSize="64px"
+                android:text="打印测试" />
             <EditText
                 android:id="@+id/station_id"
                 android:layout_width="match_parent"

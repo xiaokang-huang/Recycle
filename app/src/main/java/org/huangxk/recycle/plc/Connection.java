@@ -261,13 +261,13 @@ public class Connection {
     private static final int S7AreaTM   =	0x1D;
 
     private static final int DB_ADDR_BASE = 800;
-    private static final int DB_ADDR_WEIGHT = 0;
-    private static final int DB_ADDR_LENGTH = 4;
+    private static final int DB_ADDR_LENGTH = 30;
+    private static final int DB_ADDR_WEIGHT = 34;
     private static final int DB_ADDR_LIAODOU_WEIGHT = 8;
     private static final int DB_ADDR_LIAODOU_ANIMALNUM  = 12;
     private static final int DB_ADDR_TOTAL_WEIGHT = 16;
     private static final int DB_ADDR_TOTAL_WEIGHT2 = 20;
-    private static final int DB_READ_SIZE = 32;
+    private static final int DB_READ_SIZE = 40;
 
     private static final int MK_ADDR_BASE = 0;
     private static final int MK_READ_SIZE = 16;

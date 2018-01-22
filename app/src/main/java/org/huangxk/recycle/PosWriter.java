@@ -5,10 +5,13 @@ import android.util.Log;
 
 import com.jiagu.utils.serialUtil;
 
+import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Locale;
 
 public class PosWriter {
@@ -23,6 +26,24 @@ public class PosWriter {
 
     private FileDescriptor mFd;
     private OutputStream mOst;
+
+    public String checkConnection() {
+        if (mFd != null) {
+            return null;
+        }
+        File file = new File(PORT);
+        if (!file.exists()) {
+            return "打印机没有连接";
+        } else if (!file.canWrite()) {
+            return "打印机权限错误";
+        }
+        return "打印机未知错误";
+    }
+
+    public void writeTaskInfo(Context context, TaskData.UserInfo userInfo) throws Exception {
+        writeChinese(context.getResources().getString(R.string.task_time));
+        writeChinese(getDateToString());
+    }
 
     public void writeUser(Context context, TaskData.UserInfo userInfo) throws Exception {
         Log.d(LOG_TAG, "write user");
@@ -52,6 +73,8 @@ public class PosWriter {
         TaskData.UserInfo userInfo = TaskData.getInstance().getUserInfo();
         TaskData.AnimalInfo animalInfo = TaskData.getInstance().getAnimalInfo();
         writeChinese("------------------");
+        writeTaskInfo(context, userInfo);
+        writeChinese("------------------");
         writeUser(context, userInfo);
         if (!userInfo.isCollector() && animalInfo != null && animalInfo.isValid()) {
             writeChinese("------------------");
@@ -64,6 +87,7 @@ public class PosWriter {
         try {
             writeLine("hello world");
             writeChinese("据外媒报道，当地时间8月17日傍晚，在巴西东南部小城Teixeira de Freitas，一团犹如“上帝之手”的粉尘云悬挂在半空，当地众多居民目睹了这罕见一幕。");
+            for (int i = 0; i < 5; ++i) writeLine("");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -105,6 +129,13 @@ public class PosWriter {
             sInstance = new PosWriter();
         }
         return sInstance;
+    }
+
+    private static String getDateToString() {
+        long time=System.currentTimeMillis();
+        Date d = new Date(time);
+        SimpleDateFormat sf = new SimpleDateFormat("yyyy年MM月dd日 HH:mm:ss");
+        return sf.format(d);
     }
 
     private String dumpByte(byte[] data) {
